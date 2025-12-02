@@ -266,3 +266,6 @@ For support and questions:
 ---
 
 **Made with ❤️ using Next.js and Tailwind CSS**
+=======
+# weather-app-1
+>>>>>>> d4b2c12817d4306188b93045d1593cf13c698779
