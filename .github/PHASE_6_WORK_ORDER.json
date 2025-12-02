@@ -1,0 +1,93 @@
+{
+    "task": "implement_phase",
+    "project": "Weather App UI/UX Modernization",
+    "phase": 6,
+    "phase_name": "Usability & Experience Enhancements",
+    "source_document": {
+        "path": ".github/PHASE_6_PRD.md",
+        "summary": "Smart Location Features (Locate Me, Recent Searches) and Direct Preferences Control (Unit Toggles, Persistence)."
+    },
+    "deliverables": {
+        "components_to_update": [
+            "SearchBar.tsx",
+            "page.tsx"
+        ],
+        "new_components": [
+            "UnitToggle.tsx (optional, or inline)",
+            "RecentSearches.tsx (optional, or inline)"
+        ],
+        "functionality": [
+            "Geolocation integration",
+            "LocalStorage persistence for history and settings",
+            "Unit conversion logic"
+        ],
+        "tests_count": 4
+    },
+    "implementation_targets": {
+        "files_to_modify": [
+            "src/components/SearchBar.tsx",
+            "src/app/page.tsx",
+            "src/lib/utils.ts"
+        ],
+        "files_to_create": [
+            "src/components/UnitToggle.tsx"
+        ]
+    },
+    "constraints": {
+        "browser_support": [
+            "Chrome_latest",
+            "Firefox_latest",
+            "Safari_latest",
+            "Edge_latest"
+        ],
+        "permissions": "Handle geolocation denial gracefully"
+    },
+    "work_order": [
+        "Create helper functions in src/lib/utils.ts for unit conversion (C<->F) and time formatting",
+        "Create src/components/UnitToggle.tsx component for switching units",
+        "Update src/app/page.tsx to manage global state for units and location",
+        "Update src/app/page.tsx to persist settings to localStorage on change",
+        "Update src/app/page.tsx to load settings from localStorage on mount",
+        "Update src/components/SearchBar.tsx to add 'Locate Me' button with Geolocation API logic",
+        "Update src/components/SearchBar.tsx to implement Recent Searches dropdown using localStorage",
+        "Integrate UnitToggle into src/app/page.tsx dashboard header",
+        "Verify geolocation error handling and loading states",
+        "Verify persistence of units and recent searches across reloads"
+    ],
+    "outputs_required": {
+        "implementation_patch": {
+            "type": "diff",
+            "format": "git_unified_diff"
+        },
+        "summary_report": {
+            "type": "json",
+            "schema": {
+                "phase": "integer",
+                "features_implemented": "array",
+                "persistence_verified": "boolean"
+            }
+        }
+    },
+    "testing_checklist": {
+        "manual_tests": [
+            "Click 'Locate Me' and verify weather updates to current location",
+            "Deny location permission and verify error message",
+            "Search for a city and verify it appears in Recent Searches",
+            "Click a Recent Search item and verify it loads",
+            "Toggle Temperature Unit and verify values update",
+            "Toggle Time Format and verify times update",
+            "Reload page and verify all settings (units, last location) are restored"
+        ]
+    },
+    "success_criteria": [
+        "Geolocation works or handles errors gracefully",
+        "Recent searches are saved and usable",
+        "Unit toggles update the UI immediately",
+        "Preferences persist across sessions",
+        "No regression in existing search or display functionality"
+    ],
+    "rollback_plan": [
+        "Revert changes to SearchBar.tsx and page.tsx",
+        "Clear localStorage keys 'weather_app_units' and 'weather_app_last_location' if they cause crashes"
+    ]
+}

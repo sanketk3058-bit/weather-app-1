@@ -1,0 +1,415 @@
+{
+  "task": "implement_phase",
+  "project": "Weather App UI/UX Modernization",
+  "phase": 4,
+  "phase_name": "Visual Polish & Component Refinements",
+  "source_document": {
+    "path": ".github/PHASE_4_PRD.md",
+    "summary": "Stat card redesigns with icon containers, 5-variant badge system, forecast card weather-specific styling, main card gradient underlines, search bar refinements, 40+ CSS classes, icon integration guidance, 25+ test items."
+  },
+  "deliverables": {
+    "css_classes_count": 42,
+    "badge_variants": 5,
+    "weather_specific_styles": 5,
+    "components_to_update": [
+      "StatCard",
+      "Badge",
+      "ForecastCard",
+      "MainWeatherCard",
+      "SearchBar",
+      "page.tsx"
+    ],
+    "tests_count": 25
+  },
+  "implementation_targets": {
+    "files_to_modify": [
+      "src/app/globals.css",
+      "src/app/page.tsx",
+      "src/components/SearchBar.tsx"
+    ],
+    "css_layers": ["components"],
+    "badge_variants": [
+      "badge-success",
+      "badge-warning",
+      "badge-danger",
+      "badge-info",
+      "badge-neutral"
+    ],
+    "stat_card_types": [
+      "Air Quality",
+      "UV Index",
+      "Humidity",
+      "Wind Speed",
+      "Feels Like",
+      "Pollen"
+    ],
+    "weather_conditions": [
+      "sunny",
+      "cloudy",
+      "rainy",
+      "stormy",
+      "snowy"
+    ]
+  },
+  "constraints": {
+    "accessibility": [
+      "prefers-reduced-motion",
+      "focus-visible",
+      "aria-labels",
+      "contrast",
+      "color-not-only-information"
+    ],
+    "performance": {
+      "max_css_increase_kb": 8,
+      "avoid_layout_thrash": true
+    },
+    "browser_support": [
+      "Chrome_latest",
+      "Firefox_latest",
+      "Safari_latest",
+      "Edge_latest"
+    ],
+    "strict_json_output": true
+  },
+  "work_order": [
+    "Add 42 CSS classes to globals.css under @layer components, organized by feature (stat cards, badges, forecast cards, main card, search bar)",
+    "Implement 5 badge variants with color-coding and dot indicators",
+    "Implement 5 weather-specific card styles (sunny, cloudy, rainy, stormy, snowy) with gradient backgrounds and border accents",
+    "Add icon container support to stat cards with color-specific backgrounds",
+    "Update src/app/page.tsx stat item rendering to use stat-card classes and color-coding logic",
+    "Update src/app/page.tsx forecast card rendering with forecast-card classes and weather-specific styling",
+    "Add gradient underline animation to weather condition text in main card",
+    "Add sunrise/sunset display section to main card (if data available)",
+    "Update src/components/SearchBar.tsx with search-input-refined and suggestions-refined classes",
+    "Add icon library integration (choose: react-icons or heroicons) with 6 icons for stat cards",
+    "Implement color-based icon rendering with proper sizing and styling",
+    "Verify all hover effects smooth with proper easing and transforms",
+    "Implement 25+ tests covering visual correctness, color-coding, responsive behavior, and accessibility",
+    "Run build and verify bundle size impact stays within 8KB budget",
+    "Performance audit for animations and no layout thrashing",
+    "Cross-browser testing on Chrome, Firefox, Safari, Edge"
+  ],
+  "outputs_required": {
+    "implementation_patch": {
+      "type": "diff",
+      "format": "git_unified_diff"
+    },
+    "summary_report": {
+      "type": "json",
+      "schema": {
+        "phase": "integer",
+        "files_changed": "array",
+        "css_classes_added": "integer",
+        "badge_variants_implemented": "integer",
+        "weather_styles_implemented": "integer",
+        "tests_added": "integer",
+        "build_size_change_kb": "number",
+        "accessibility_checks": "object"
+      }
+    },
+    "test_report": {
+      "type": "json",
+      "required_fields": [
+        "visual_tests",
+        "color_coding_tests",
+        "responsive_tests",
+        "accessibility_tests",
+        "hover_effect_tests"
+      ]
+    }
+  },
+  "css_classes_specification": {
+    "stat_card_classes": {
+      "count": 12,
+      "list": [
+        "stat-card",
+        "stat-card:hover",
+        "stat-card__icon-container",
+        "stat-card__icon-container.success",
+        "stat-card__icon-container.warning",
+        "stat-card__icon-container.danger",
+        "stat-card__icon",
+        "stat-card__label",
+        "stat-card__value",
+        "stat-card__description"
+      ],
+      "description": "Stat card container, icon container with 3 color variants, and text sections"
+    },
+    "badge_classes": {
+      "count": 6,
+      "list": [
+        "badge",
+        "badge-success",
+        "badge-warning",
+        "badge-danger",
+        "badge-info",
+        "badge-neutral",
+        "badge__dot"
+      ],
+      "description": "Base badge with 5 color variants and dot indicator"
+    },
+    "forecast_card_classes": {
+      "count": 13,
+      "list": [
+        "forecast-card",
+        "forecast-card:hover",
+        "forecast-card__icon",
+        "forecast-card__date",
+        "forecast-card__condition",
+        "forecast-card__temperature",
+        "forecast-card__details",
+        "forecast-card__detail-item",
+        "forecast-card.sunny",
+        "forecast-card.cloudy",
+        "forecast-card.rainy",
+        "forecast-card.stormy",
+        "forecast-card.snowy"
+      ],
+      "description": "Forecast card base classes with 5 weather-specific variants"
+    },
+    "main_card_classes": {
+      "count": 4,
+      "list": [
+        "weather-main-card__condition",
+        "weather-main-card__condition::after",
+        "weather-main-card__sunrise-sunset",
+        "weather-main-card__sun-time"
+      ],
+      "description": "Main weather card enhancements with gradient underline and sunrise/sunset"
+    },
+    "search_bar_classes": {
+      "count": 7,
+      "list": [
+        "search-bar-refined",
+        "search-input-refined",
+        "search-input-refined:focus",
+        "suggestions-refined",
+        "suggestion-item-refined",
+        "suggestion-item-refined:hover",
+        "suggestion-item-refined.selected"
+      ],
+      "description": "Search bar refinements with improved input and suggestions styling"
+    }
+  },
+  "color_coding_specification": {
+    "stat_card_colors": {
+      "success": {
+        "border": "#10B981",
+        "background": "rgba(16, 185, 129, 0.15)",
+        "badge_bg": "rgba(16, 185, 129, 0.2)"
+      },
+      "warning": {
+        "border": "#F59E0B",
+        "background": "rgba(245, 158, 11, 0.15)",
+        "badge_bg": "rgba(245, 158, 11, 0.2)"
+      },
+      "danger": {
+        "border": "#F43F5E",
+        "background": "rgba(244, 63, 94, 0.15)",
+        "badge_bg": "rgba(244, 63, 94, 0.2)"
+      },
+      "info": {
+        "border": "#0EA5E9",
+        "background": "rgba(14, 165, 233, 0.15)",
+        "badge_bg": "rgba(14, 165, 233, 0.2)"
+      }
+    },
+    "forecast_card_borders": {
+      "sunny": "#F59E0B",
+      "cloudy": "#94A3B8",
+      "rainy": "#3B82F6",
+      "stormy": "#8B5CF6",
+      "snowy": "#22D3EE"
+    }
+  },
+  "icon_specification": {
+    "library_options": [
+      "react-icons (recommended)",
+      "heroicons",
+      "feather-icons"
+    ],
+    "icons_required": [
+      {
+        "name": "Air Quality",
+        "suggested": "FiLeaf or MdAir",
+        "color": "inherit from border",
+        "size": 24
+      },
+      {
+        "name": "UV Index",
+        "suggested": "FiSun or WiDaySunny",
+        "color": "inherit from border",
+        "size": 24
+      },
+      {
+        "name": "Humidity",
+        "suggested": "FiDroplets or WiHumidity",
+        "color": "#0EA5E9",
+        "size": 24
+      },
+      {
+        "name": "Wind Speed",
+        "suggested": "FiWind or WiStrongWind",
+        "color": "#06B6D4",
+        "size": 24
+      },
+      {
+        "name": "Feels Like",
+        "suggested": "FiThermometer or WiThermometer",
+        "color": "#A855F7",
+        "size": 24
+      },
+      {
+        "name": "Pollen",
+        "suggested": "FiFlower or MdLocalFlorist",
+        "color": "inherit from border",
+        "size": 24
+      }
+    ]
+  },
+  "animation_specifications": {
+    "stat_card_hover": {
+      "transform": "translateY(-4px) scale(1.04)",
+      "shadow_change": "var(--shadow-md) to var(--shadow-lg)",
+      "duration_ms": 250,
+      "easing": "cubic-bezier(0.34, 1.56, 0.64, 1)"
+    },
+    "forecast_card_hover": {
+      "transform": "scale(1.08) translateY(-6px)",
+      "shadow_change": "var(--shadow-md) to var(--shadow-xl)",
+      "duration_ms": 250,
+      "easing": "cubic-bezier(0.34, 1.56, 0.64, 1)"
+    },
+    "search_input_focus": {
+      "transform": "scale(1.02)",
+      "shadow_change": "var(--shadow-sm) to var(--shadow-md)",
+      "background_opacity_change": "0.1 to 0.12",
+      "duration_ms": 200,
+      "easing": "ease-out"
+    },
+    "suggestion_item_hover": {
+      "transform": "translateX(4px)",
+      "background_change": "none to rgba(59, 130, 246, 0.2)",
+      "duration_ms": 150,
+      "easing": "ease-out"
+    },
+    "gradient_underline": {
+      "animation": "Fade in on page load",
+      "opacity_normal": 0.6,
+      "opacity_hover": 1.0,
+      "gradient": "var(--color-primary) to var(--color-secondary)"
+    }
+  },
+  "responsive_breakpoints": {
+    "mobile": {
+      "stat_card_icon_size": "48px x 48px",
+      "stat_card_padding": "20px",
+      "forecast_card_grid": "grid-cols-1"
+    },
+    "tablet": {
+      "stat_card_icon_size": "56px x 56px",
+      "stat_card_padding": "24px",
+      "forecast_card_grid": "grid-cols-2"
+    },
+    "desktop": {
+      "stat_card_icon_size": "56px x 56px",
+      "stat_card_padding": "24px",
+      "forecast_card_grid": "grid-cols-4"
+    }
+  },
+  "testing_checklist": {
+    "visual_tests": [
+      "All stat cards display with correct color-coded borders",
+      "Icon containers visible with color-specific backgrounds (4 variants)",
+      "All 5 badge variants render with correct colors and borders",
+      "Badge dot indicators display correctly",
+      "Forecast cards show weather-specific border colors (5 variants)",
+      "Gradient underline visible on weather condition text",
+      "Sunrise/sunset display formatted and positioned correctly",
+      "Search bar input focus state visible with scale animation",
+      "Suggestions dropdown styled with gradient border"
+    ],
+    "color_coding_tests": [
+      "Air Quality: Good (green), Moderate (amber), Poor (red) mapping correct",
+      "UV Index: Low-Very High (green/amber/red) mapping correct",
+      "Humidity: Info blue color applied consistently",
+      "Wind Speed: Cyan color applied consistently",
+      "Feels Like: Purple color applied consistently",
+      "Pollen: Risk level (green/amber/red) mapping correct",
+      "All badge colors match stat card colors",
+      "Weather-specific forecast colors match spec"
+    ],
+    "responsive_tests": [
+      "Stat cards stack correctly on mobile",
+      "Stat card icons scale appropriately on mobile",
+      "Badge text doesn't overflow on any screen size",
+      "Forecast grid adjusts to 1-col (mobile), 2-col (tablet), 4-col (desktop)",
+      "Search bar responsive on all sizes",
+      "Sunrise/sunset display stacks on mobile",
+      "Main card maintains layout on mobile"
+    ],
+    "accessibility_tests": [
+      "All text meets WCAG AA contrast (4.5:1 minimum)",
+      "Color not used as only method of conveying information",
+      "Badge status has secondary indicator (dot or icon)",
+      "Focus states visible on search input",
+      "Keyboard navigation works in suggestions dropdown",
+      "Hover effects respect prefers-reduced-motion",
+      "Icon descriptions accessible (via aria-label or title)",
+      "Badge content meaningful without color"
+    ],
+    "hover_effect_tests": [
+      "Stat card hover: smooth lift and scale (250ms)",
+      "Stat card icon hover: responds to parent hover",
+      "Forecast card hover: dramatic scale and lift (250ms)",
+      "Search input focus: subtle scale animation (200ms)",
+      "Suggestion item hover: slide right animation (150ms)",
+      "Gradient underline: opacity increases on hover",
+      "All animations use GPU acceleration (transform, opacity)",
+      "No jank or stuttering in animations"
+    ]
+  },
+  "implementation_sequence": [
+    "Step 1: Add all 42 CSS classes to globals.css under @layer components",
+    "Step 2: Update src/app/page.tsx stat item rendering with stat-card classes",
+    "Step 3: Implement color-coding logic for stat cards based on metric values",
+    "Step 4: Add icon containers with color-specific backgrounds",
+    "Step 5: Add weather-specific background classes to cards",
+    "Step 6: Update forecast card rendering with forecast-card classes and weather styling",
+    "Step 7: Add gradient underline to weather condition text",
+    "Step 8: Add sunrise/sunset display section (if data available)",
+    "Step 9: Update SearchBar with refined input and suggestions classes",
+    "Step 10: Install and integrate icon library (react-icons recommended)",
+    "Step 11: Add icons to stat cards with proper sizing and color",
+    "Step 12: Implement badge system for status indicators",
+    "Step 13: Test all visual elements and hover effects",
+    "Step 14: Run responsive tests on all breakpoints",
+    "Step 15: Run accessibility audit and verify contrast",
+    "Step 16: Build and verify bundle size within budget"
+  ],
+  "success_criteria": [
+    "All stat cards display with color-coded borders and icon containers",
+    "All 5 badge variants implemented and styled correctly",
+    "All 5 weather-specific card styles rendering properly",
+    "Forecast cards show weather-specific colors and borders",
+    "Weather condition gradient underline visible and animates smoothly",
+    "Sunrise/sunset display functional and properly formatted",
+    "Search bar refinements visible and interactive",
+    "All hover effects smooth and performant (250ms max)",
+    "No visual regressions from Phases 1-3",
+    "Accessibility maintained (WCAG AA, prefers-reduced-motion)",
+    "Mobile responsive verified on all breakpoints",
+    "Build passes without errors",
+    "CSS bundle size increase ≤ 8 KB",
+    "All 25+ tests passing"
+  ],
+  "rollback_plan": [
+    "If animations cause performance issues: Comment out animation classes and simplify to static effects",
+    "If CSS exceeds budget: Remove least critical visual features (e.g., gradient underlines)",
+    "If icon integration breaks: Use emoji fallbacks instead of SVG icons",
+    "If color-coding causes confusion: Add secondary text indicators alongside colors",
+    "Full rollback: git checkout src/app/globals.css src/app/page.tsx src/components/SearchBar.tsx"
+  ],
+  "strict": true,
+  "notes": "Respond ONLY with valid JSON matching this schema. Do not include commentary, markdown fences, or any non-JSON output. If a field is not applicable, return null or an empty array/object. If output is invalid, correct and return only the corrected JSON."
+}

@@ -1,0 +1,202 @@
+{
+    "task": "implement_phase",
+    "project": "Weather App UI/UX Modernization",
+    "phase": 5,
+    "phase_name": "Advanced Effects & Premium Features",
+    "source_document": {
+        "path": ".github/PHASE_5_PRD.md",
+        "summary": "Weather-responsive dynamic backgrounds, smooth number animations, advanced icon color transitions, and optional premium features (hourly forecast, weather alerts)."
+    },
+    "deliverables": {
+        "css_classes_count": 25,
+        "hooks_count": 1,
+        "components_to_update": [
+            "page.tsx",
+            "WeatherIcon"
+        ],
+        "new_components": [
+            "HourlyForecast (Optional)",
+            "WeatherAlerts (Optional)"
+        ],
+        "tests_count": 30
+    },
+    "implementation_targets": {
+        "files_to_modify": [
+            "src/app/globals.css",
+            "src/app/page.tsx",
+            "src/components/WeatherIcon.tsx"
+        ],
+        "files_to_create": [
+            "src/hooks/useAnimatedNumber.ts"
+        ],
+        "css_layers": [
+            "utilities",
+            "components"
+        ],
+        "weather_conditions": [
+            "sunny",
+            "cloudy",
+            "rainy",
+            "stormy",
+            "snowy"
+        ]
+    },
+    "constraints": {
+        "accessibility": [
+            "prefers-reduced-motion",
+            "contrast",
+            "aria-live"
+        ],
+        "performance": {
+            "fps_target": 60,
+            "gpu_acceleration": true
+        },
+        "browser_support": [
+            "Chrome_latest",
+            "Firefox_latest",
+            "Safari_latest",
+            "Edge_latest"
+        ],
+        "strict_json_output": true
+    },
+    "work_order": [
+        "Add weather-specific CSS variables and background gradients to globals.css",
+        "Implement advanced CSS animations (rainFlow, stormFlash, snowEffect) in globals.css",
+        "Create src/hooks/useAnimatedNumber.ts custom hook for smooth counter animations",
+        "Update src/app/page.tsx to detect weather condition and apply body classes",
+        "Update src/app/page.tsx to use useAnimatedNumber for temperature and stats",
+        "Update src/components/WeatherIcon.tsx to support dynamic color transitions based on weather/temp",
+        "Implement optional Hourly Forecast widget styles and component logic",
+        "Implement optional Weather Alerts section styles and component logic",
+        "Verify all animations respect prefers-reduced-motion media query",
+        "Run performance tests to ensure 60fps animations",
+        "Cross-browser testing for background effects"
+    ],
+    "outputs_required": {
+        "implementation_patch": {
+            "type": "diff",
+            "format": "git_unified_diff"
+        },
+        "summary_report": {
+            "type": "json",
+            "schema": {
+                "phase": "integer",
+                "files_changed": "array",
+                "features_implemented": "array",
+                "performance_metrics": "object"
+            }
+        }
+    },
+    "css_classes_specification": {
+        "weather_backgrounds": {
+            "count": 5,
+            "list": [
+                "body.weather-sunny",
+                "body.weather-cloudy",
+                "body.weather-rainy",
+                "body.weather-stormy",
+                "body.weather-snowy"
+            ],
+            "description": "Body classes that trigger CSS variable changes for gradients and accents"
+        },
+        "animation_effects": {
+            "count": 3,
+            "list": [
+                "rain-streaks",
+                "storm-overlay",
+                "snowflake"
+            ],
+            "description": "Overlay elements for specific weather animations"
+        },
+        "premium_widgets": {
+            "count": 10,
+            "list": [
+                "hourly-forecast",
+                "hourly-forecast__item",
+                "weather-alerts",
+                "alert-item",
+                "alert-item.severe",
+                "alert-item.moderate",
+                "alert-item.minor"
+            ],
+            "description": "Styles for optional premium features"
+        }
+    },
+    "color_coding_specification": {
+        "weather_accents": {
+            "sunny": "#F59E0B",
+            "cloudy": "#94A3B8",
+            "rainy": "#3B82F6",
+            "stormy": "#8B5CF6",
+            "snowy": "#06B6D4"
+        },
+        "alert_severity": {
+            "severe": "#F43F5E",
+            "moderate": "#F59E0B",
+            "minor": "#0EA5E9"
+        }
+    },
+    "animation_specifications": {
+        "background_transition": {
+            "duration": "600ms",
+            "easing": "ease-in-out"
+        },
+        "number_counter": {
+            "duration": "800ms",
+            "easing": "cubic-bezier(0.25, 0.46, 0.45, 0.94)"
+        },
+        "icon_color_transition": {
+            "duration": "600ms",
+            "easing": "ease-out"
+        },
+        "hourly_scroll": {
+            "duration": "300ms",
+            "easing": "cubic-bezier(0.4, 0, 0.2, 1)"
+        }
+    },
+    "testing_checklist": {
+        "visual_tests": [
+            "Background gradient changes smoothly on weather update",
+            "Rain/Snow/Storm animations visible and positioned correctly",
+            "Number counters animate smoothly from old to new value",
+            "Icon colors match the current weather condition",
+            "Hourly forecast scrolls smoothly (if implemented)",
+            "Alerts display with correct severity colors (if implemented)"
+        ],
+        "performance_tests": [
+            "Background animations do not cause layout thrashing",
+            "Animations run at 60fps on desktop",
+            "Memory usage stable during long animation runs"
+        ],
+        "accessibility_tests": [
+            "Animations disabled/simplified when prefers-reduced-motion is true",
+            "Text contrast maintained on all background variants",
+            "Alerts are accessible via keyboard and screen readers"
+        ]
+    },
+    "implementation_sequence": [
+        "Step 1: Add CSS variables and keyframes for weather backgrounds in globals.css",
+        "Step 2: Implement weather type detection and body class updates in page.tsx",
+        "Step 3: Create useAnimatedNumber hook and apply to stats in page.tsx",
+        "Step 4: Update WeatherIcon.tsx for dynamic color transitions",
+        "Step 5: Implement Hourly Forecast widget (Optional)",
+        "Step 6: Implement Weather Alerts section (Optional)",
+        "Step 7: Verify performance and accessibility"
+    ],
+    "success_criteria": [
+        "Weather-responsive backgrounds implemented and smooth",
+        "Number animations display smoothly (60fps)",
+        "Icon colors transition correctly based on weather",
+        "All animations respect prefers-reduced-motion",
+        "No performance degradation from previous phases",
+        "Build passes without errors"
+    ],
+    "rollback_plan": [
+        "If background animations lag: Remove weather class logic, revert to default background",
+        "If number animations cause issues: Disable useAnimatedNumber, use static values",
+        "If color transitions fail: Revert WeatherIcon.tsx to static colors",
+        "Full rollback: git checkout src/app/globals.css src/app/page.tsx src/components/WeatherIcon.tsx"
+    ],
+    "strict": true,
+    "notes": "Respond ONLY with valid JSON matching this schema. Do not include commentary, markdown fences, or any non-JSON output."
+}
