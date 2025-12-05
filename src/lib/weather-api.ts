@@ -1,4 +1,6 @@
 import axios from 'axios'
+import http from 'http'
+import https from 'https'
 import type {
   WeatherData,
   LocationData,
@@ -20,46 +22,100 @@ if (!API_KEY) {
   throw new Error('OPENWEATHER_API_KEY environment variable is not defined')
 }
 
+// Keep-alive options for reusing OpenWeatherMap TCP connections
+const KEEP_ALIVE_AGENT_OPTIONS = { keepAlive: true, maxSockets: 50, keepAliveMsecs: 30_000 } as const
+const httpAgent = new http.Agent(KEEP_ALIVE_AGENT_OPTIONS)
+const httpsAgent = new https.Agent(KEEP_ALIVE_AGENT_OPTIONS)
+
+export const axiosInstance = axios.create({
+  baseURL: BASE_URL,
+  params: { appid: API_KEY, units: 'metric' },
+  timeout: 10000,
+  httpAgent,
+  httpsAgent,
+})
+
+// In-process cache + in-flight dedupe
+type CacheEntry = { expiresAt: number; value: unknown }
+const memoryCache = new Map<string, CacheEntry>()
+const inFlight = new Map<string, Promise<unknown>>()
+
+export function makeCacheKey(method: string, url: string, params?: Record<string, unknown>) {
+  const sorted = params
+    ? Object.keys(params)
+        .sort()
+        .map((k) => `${k}=${String((params as Record<string, any>)[k])}`)
+        .join('&')
+    : ''
+  return `${method.toUpperCase()}|${url}|${sorted}`
+}
+
+export async function cachedFetch<T>(key: string, ttlMs: number, fetcher: () => Promise<T>): Promise<T> {
+  const now = Date.now()
+
+  const cached = memoryCache.get(key)
+  if (cached && cached.expiresAt > now) {
+    return cached.value as T
+  }
+
+  const inflight = inFlight.get(key)
+  if (inflight) return inflight as Promise<T>
+
+  const p = (async () => {
+    try {
+      const res = await fetcher()
+      memoryCache.set(key, { expiresAt: Date.now() + ttlMs, value: res as unknown })
+      return res
+    } catch (err) {
+      // Do not populate cache on error
+      throw err
+    } finally {
+      inFlight.delete(key)
+    }
+  })()
+
+  inFlight.set(key, p as Promise<unknown>)
+  return p
+}
+
 class WeatherAPIService {
-  private client = axios.create({
-    baseURL: BASE_URL,
-    params: {
-      appid: API_KEY,
-      units: 'metric',
-    },
-    timeout: 10000, // 10 second timeout
-  })
+  // use shared axios instance with keep-alive
+  private client = axiosInstance
 
   async getCurrentWeather(lat: number, lon: number): Promise<CurrentWeather> {
-    const response = await this.client.get('/weather', {
-      params: { lat, lon },
-    })
+    const key = makeCacheKey('GET', '/weather', { lat, lon })
+    const data = await cachedFetch<OpenWeatherResponse>(key, 60 * 1000, () =>
+      this.client.get('/weather', { params: { lat, lon } }).then((r) => r.data as OpenWeatherResponse)
+    )
 
-    return this.transformCurrentWeather(response.data)
+    return this.transformCurrentWeather(data)
   }
 
   async getForecast(lat: number, lon: number): Promise<{ daily: DailyForecast[], hourly: any[] }> {
-    const response = await this.client.get('/forecast', {
-      params: { lat, lon },
-    })
+    const key = makeCacheKey('GET', '/forecast', { lat, lon })
+    const data = await cachedFetch<any>(key, 5 * 60 * 1000, () =>
+      this.client.get('/forecast', { params: { lat, lon } }).then((r) => r.data)
+    )
 
-    return this.processForecastData(response.data)
+    return this.processForecastData(data)
   }
 
   async getAirQuality(lat: number, lon: number): Promise<AirQualityData> {
-    const response = await this.client.get('/air_pollution', {
-      params: { lat, lon },
-    })
+    const key = makeCacheKey('GET', '/air_pollution', { lat, lon })
+    const data = await cachedFetch<AirQualityResponse>(key, 5 * 60 * 1000, () =>
+      this.client.get('/air_pollution', { params: { lat, lon } }).then((r) => r.data as AirQualityResponse)
+    )
 
-    return this.transformAirQuality(response.data)
+    return this.transformAirQuality(data)
   }
 
   async getUVIndex(lat: number, lon: number): Promise<UVIndexData> {
-    const response = await this.client.get('/uvi', {
-      params: { lat, lon },
-    })
+    const key = makeCacheKey('GET', '/uvi', { lat, lon })
+    const data = await cachedFetch<UVIndexResponse>(key, 5 * 60 * 1000, () =>
+      this.client.get('/uvi', { params: { lat, lon } }).then((r) => r.data as UVIndexResponse)
+    )
 
-    return this.transformUVIndex(response.data)
+    return this.transformUVIndex(data)
   }
 
   async searchLocation(query: string): Promise<GeocodingResult[]> {

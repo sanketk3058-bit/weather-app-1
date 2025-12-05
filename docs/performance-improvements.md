@@ -200,10 +200,13 @@
 - After header rollout, implement `cachedFetch` in `src/lib/weather-api.ts` and add one unit test that asserts dedupe behavior.
 
 
+
 **Follow-up tasks for implementation (handoff)**
-- ~~`PATCH 1` — Add `Cache-Control` headers to `src/app/api/weather/route.ts`.~~ **(Completed: 2025-12-05)**
-- `PATCH 2` — Add `cachedFetch` + in-flight dedupe to `src/lib/weather-api.ts` and wrap axios calls.
-- `PATCH 3` — Add Axios keep-alive configuration in axios client creation.
+- ✅~~`PATCH 1` — Add `Cache-Control` headers to `src/app/api/weather/route.ts`.~~ **(Completed: 2025-12-05)**
+- ✅ `PATCH 2` — Add `cachedFetch` + in-flight dedupe to `src/lib/weather-api.ts` and wrap axios calls. **DONE: 2025-12-06**
+- ✅ `PATCH 3` — Add Axios keep-alive configuration in axios client creation. **DONE: 2025-12-06**
+
+Note: TTL choices implemented conservatively — Current=60s, Forecast=5m, Optional endpoints=5m, Pollen=24h. In-process cache is memory-only and single-instance (not shared across processes); consider Redis/Memcached for multi-instance deployments.
 - `PATCH 4` — Convert 2–3 heavy components to `next/dynamic` and audit `use client` usage.
 
 **Document history**
