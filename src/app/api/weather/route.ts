@@ -120,6 +120,7 @@ export async function GET(request: Request) {
 
     return NextResponse.json(weatherData, {
       headers: {
+        'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=30',
         'X-RateLimit-Limit': '30',
         'X-RateLimit-Remaining': rateLimitResult.remaining.toString(),
         'X-RateLimit-Reset': rateLimitResult.resetTime.toString(),

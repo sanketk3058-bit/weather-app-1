@@ -4,13 +4,13 @@ A stunning weather application built with Next.js featuring Apple glass-like des
 
 ## Features
 
-✨ **Apple Glass-like Design** - Beautiful frosted glass effects with smooth animations  
-🌤️ **Current Weather** - Real-time weather conditions with detailed information  
-📅 **7-Day Forecast** - Comprehensive weather predictions for the week ahead  
-🔬 **Advanced Features** - Air quality index, UV index, and pollen count  
-🌍 **Global Search** - Search weather for any city, state, or country worldwide  
-📱 **Responsive Design** - Perfect experience on mobile, tablet, and desktop  
-♿ **Accessibility** - Full keyboard navigation and screen reader support  
+**Apple Glass-like Design** - Beautiful frosted glass effects with smooth animations  
+**Current Weather** - Real-time weather conditions with detailed information  
+**7-Day Forecast** - Comprehensive weather predictions for the week ahead  
+**Advanced Features** - Air quality index, UV index, and pollen count  
+**Global Search** - Search weather for any city, state, or country worldwide  
+**Responsive Design** - Perfect experience on mobile, tablet, and desktop  
+**Accessibility** - Full keyboard navigation and screen reader support
 
 ## Tech Stack
 

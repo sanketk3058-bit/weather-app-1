@@ -199,8 +199,9 @@
 - Pick one high-priority item to implement first (I recommend adding `Cache-Control` headers to `src/app/api/weather/route.ts`), validate with `curl -I`, and run a short dedupe benchmark.
 - After header rollout, implement `cachedFetch` in `src/lib/weather-api.ts` and add one unit test that asserts dedupe behavior.
 
+
 **Follow-up tasks for implementation (handoff)**
-- `PATCH 1` — Add `Cache-Control` headers to `src/app/api/weather/route.ts`.
+- ~~`PATCH 1` — Add `Cache-Control` headers to `src/app/api/weather/route.ts`.~~ **(Completed: 2025-12-05)**
 - `PATCH 2` — Add `cachedFetch` + in-flight dedupe to `src/lib/weather-api.ts` and wrap axios calls.
 - `PATCH 3` — Add Axios keep-alive configuration in axios client creation.
 - `PATCH 4` — Convert 2–3 heavy components to `next/dynamic` and audit `use client` usage.

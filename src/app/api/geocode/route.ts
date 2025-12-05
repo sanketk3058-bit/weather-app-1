@@ -47,6 +47,7 @@ export async function GET(request: Request) {
     const locations = await weatherAPI.searchLocation(sanitizedQuery)
     return NextResponse.json(locations, {
       headers: {
+        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=300',
         'X-RateLimit-Limit': '30',
         'X-RateLimit-Remaining': rateLimitResult.remaining.toString(),
         'X-RateLimit-Reset': rateLimitResult.resetTime.toString(),
