@@ -1,13 +1,13 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import dynamic from 'next/dynamic'
 import { GlassCard } from '@/components/GlassCard'
 import { SearchBar } from '@/components/SearchBar'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { FiThermometer, FiDroplet, FiWind, FiActivity, FiTarget, FiSun, FiCloud, FiMoon } from 'react-icons/fi'
-import type { WeatherData } from '@/lib/types'
 import { useAnimatedNumber } from '@/hooks/useAnimatedNumber'
+import { useWeather, type WeatherLocation } from '@/hooks/useWeather'
 import { UnitToggle } from '@/components/UnitToggle'
 import { convertTemperature } from '@/lib/utils'
 import { WeatherIconSkeleton } from '@/components/skeletons/WeatherIconSkeleton'
@@ -31,12 +31,14 @@ const HourlyForecast = dynamic(
 )
 
 export default function Home() {
-  const [weatherData, setWeatherData] = useState<WeatherData | null>(null)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [currentLocation, setCurrentLocation] = useState<WeatherLocation | null>(null)
   const [unit, setUnit] = useState<'metric' | 'imperial'>('metric')
   const [isLoaded, setIsLoaded] = useState(false)
-  const searchIdRef = useRef(0)
+
+  // Use SWR-powered hook for weather data fetching with caching & deduplication
+  const { data: weatherData, error: fetchError, isLoading, isValidating } = useWeather(currentLocation)
+  const loading = isLoading || isValidating
+  const error = fetchError?.message ?? null
 
   // Load settings from localStorage
   useEffect(() => {
@@ -46,7 +48,7 @@ export default function Home() {
     const savedLocation = localStorage.getItem('weather-app-last-location')
     if (savedLocation) {
       const { lat, lon, location } = JSON.parse(savedLocation)
-      handleSearch(lat, lon, location)
+      setCurrentLocation({ lat, lon, location })
     }
     setIsLoaded(true)
   }, [])
@@ -58,35 +60,12 @@ export default function Home() {
     }
   }, [unit, isLoaded])
 
-  const handleSearch = async (lat: number, lon: number, location: string) => {
-    const currentSearchId = ++searchIdRef.current
-    setLoading(true)
-    setError(null)
-
-    try {
-      // Call the actual API route
-      const response = await fetch(`/api/weather?lat=${lat}&lon=${lon}&location=${encodeURIComponent(location)}`)
-
-      // Ignore if a newer search has started
-      if (currentSearchId !== searchIdRef.current) {
-        return
-      }
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch weather data')
-      }
-
-      const weatherData: WeatherData = await response.json()
-      setWeatherData(weatherData)
-
-      // Save last location
-      localStorage.setItem('weather-app-last-location', JSON.stringify({ lat, lon, location }))
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch weather data')
-    } finally {
-      setLoading(false)
-    }
-  }
+  // Handle search by updating location state (triggers SWR refetch automatically)
+  const handleSearch = useCallback((lat: number, lon: number, location: string) => {
+    setCurrentLocation({ lat, lon, location })
+    // Save last location to localStorage
+    localStorage.setItem('weather-app-last-location', JSON.stringify({ lat, lon, location }))
+  }, [])
 
   // Effect to update body class based on weather condition
   useEffect(() => {

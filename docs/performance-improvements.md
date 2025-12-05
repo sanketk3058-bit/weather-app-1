@@ -217,6 +217,24 @@ Note: TTL choices implemented conservatively — Current=60s, Forecast=5m, Optio
 - Dynamic import `WeatherIcon` in `HourlyForecast.tsx` with skeleton fallback
 - Build verified: First Load JS reduced from 97.3kB shared bundle
 
+- ✅ `PATCH 5` — Add client-side SWR caching in `src/hooks/useWeather.ts`. **DONE: 2025-12-06**
+
+**PATCH 5 Implementation Details:**
+- Installed `swr` package for client-side data fetching and caching
+- Created `src/hooks/useWeather.ts` hook with SWR integration
+- Configured SWR options: `dedupingInterval: 60s`, `revalidateIfStale: true`, `revalidateOnFocus: false`
+- Refactored `src/app/page.tsx` to use `useWeather` hook instead of manual fetch/state management
+- Benefits: Automatic request deduplication, stale-while-revalidate pattern, error retry, keeps previous data during revalidation
+- Added unit tests in `__tests__/useWeather.test.tsx`
+
+- ✅ `PATCH 6` — Add `@next/bundle-analyzer` for bundle analysis. **DONE: 2025-12-06**
+
+**PATCH 6 Implementation Details:**
+- Installed `@next/bundle-analyzer` and `cross-env` as dev dependencies
+- Updated `next.config.js` to conditionally enable bundle analyzer when `ANALYZE=true`
+- Added `analyze` npm script: `cross-env ANALYZE=true next build`
+- Usage: Run `npm run analyze` to generate bundle analysis reports
+
 **Document history**
 - Created: 2025-12-05
 - Author: Automated performance findings (design subagent)
