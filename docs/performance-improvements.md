@@ -207,7 +207,15 @@
 - ✅ `PATCH 3` — Add Axios keep-alive configuration in axios client creation. **DONE: 2025-12-06**
 
 Note: TTL choices implemented conservatively — Current=60s, Forecast=5m, Optional endpoints=5m, Pollen=24h. In-process cache is memory-only and single-instance (not shared across processes); consider Redis/Memcached for multi-instance deployments.
-- `PATCH 4` — Convert 2–3 heavy components to `next/dynamic` and audit `use client` usage.
+- ✅ `PATCH 4` — Convert 2–3 heavy components to `next/dynamic` and audit `use client` usage. **DONE: 2025-12-06**
+
+**PATCH 4 Implementation Details:**
+- Converted `GlassCard.tsx` and `UnitToggle.tsx` to server components (removed `use client`)
+- Created skeleton components: `HourlyForecastSkeleton.tsx`, `WeatherIconSkeleton.tsx`
+- Dynamic import `WeatherIcon` in `page.tsx` with skeleton fallback (heavy: Framer Motion + 15+ react-icons)
+- Dynamic import `HourlyForecast` in `page.tsx` with skeleton fallback
+- Dynamic import `WeatherIcon` in `HourlyForecast.tsx` with skeleton fallback
+- Build verified: First Load JS reduced from 97.3kB shared bundle
 
 **Document history**
 - Created: 2025-12-05

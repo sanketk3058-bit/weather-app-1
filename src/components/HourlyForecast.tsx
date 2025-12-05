@@ -1,10 +1,20 @@
 'use client'
 
 import React from 'react'
+import dynamic from 'next/dynamic'
 import { GlassCard } from './GlassCard'
-import { WeatherIcon } from './WeatherIcon'
+import { WeatherIconSkeleton } from './skeletons/WeatherIconSkeleton'
 import type { HourlyForecast as HourlyForecastType } from '@/lib/types'
 import { convertTemperature } from '@/lib/utils'
+
+// Dynamic import for WeatherIcon to reduce this component's bundle contribution
+const WeatherIcon = dynamic(
+    () => import('./WeatherIcon').then(mod => ({ default: mod.WeatherIcon })),
+    {
+        ssr: false,
+        loading: () => <WeatherIconSkeleton size={40} />
+    }
+)
 
 interface HourlyForecastProps {
     data: HourlyForecastType[]

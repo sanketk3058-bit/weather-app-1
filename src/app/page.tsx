@@ -1,16 +1,34 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import dynamic from 'next/dynamic'
 import { GlassCard } from '@/components/GlassCard'
 import { SearchBar } from '@/components/SearchBar'
-import { WeatherIcon } from '@/components/WeatherIcon'
-import { HourlyForecast } from '@/components/HourlyForecast'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { FiThermometer, FiDroplet, FiWind, FiActivity, FiTarget, FiSun, FiCloud, FiMoon } from 'react-icons/fi'
 import type { WeatherData } from '@/lib/types'
 import { useAnimatedNumber } from '@/hooks/useAnimatedNumber'
 import { UnitToggle } from '@/components/UnitToggle'
 import { convertTemperature } from '@/lib/utils'
+import { WeatherIconSkeleton } from '@/components/skeletons/WeatherIconSkeleton'
+import { HourlyForecastSkeleton } from '@/components/skeletons/HourlyForecastSkeleton'
+
+// Dynamic imports for heavy components to reduce initial bundle size
+const WeatherIcon = dynamic(
+  () => import('@/components/WeatherIcon').then(mod => ({ default: mod.WeatherIcon })),
+  {
+    ssr: false,
+    loading: () => <WeatherIconSkeleton size={64} />
+  }
+)
+
+const HourlyForecast = dynamic(
+  () => import('@/components/HourlyForecast').then(mod => ({ default: mod.HourlyForecast })),
+  {
+    ssr: false,
+    loading: () => <HourlyForecastSkeleton />
+  }
+)
 
 export default function Home() {
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null)

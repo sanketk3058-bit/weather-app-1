@@ -117,6 +117,7 @@ Before changing architecture, check `ARCHITECTURE_FLOW.md` and `TIMEZONE_COUNTRY
 
 These rules are for any future automation or LLM integrating with this repo.
 
+0. **NEVER run git commands**: Do not execute any git commands (e.g., `git add`, `git commit`, `git push`, `git pull`, `git checkout`, `git branch`, `git stash`, `git diff`, `git status`, `git log`, etc.). The user manages version control manually. This rule has no exceptions.
 1. **Read the instructions first**: Always load `.github/copilot-instructions.md`, `AGENTS.md`, and `ARCHITECTURE_FLOW.md` before editing code.
 2. **Prefer minimal, targeted diffs**: Change only what is necessary; avoid broad refactors without explicit instruction.
 3. **Respect layering**: Do not introduce cross-layer coupling (e.g., components calling external APIs or services bypassing types).
