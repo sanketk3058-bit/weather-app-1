@@ -1,58 +1,86 @@
 @tailwind base;
 /* Theme vars and dark-mode variable set (inserted per PRD) */
 :root {
+  /* Base colors */
   --foreground: 210 20% 12%;
   --foreground-muted: 215 20.2% 65.1%;
   --background: 0 0% 98%;
+
+  /* Glassmorphism Variables - Light Mode */
+  /* Primary: High opacity for main containers */
   --glass-primary: linear-gradient(to bottom right, rgba(255,255,255,0.25), rgba(255,255,255,0.10));
+  /* Secondary: Medium opacity for nested elements */
   --glass-secondary: linear-gradient(to bottom right, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
+  /* Tertiary: Low opacity for subtle backgrounds */
   --glass-tertiary: rgba(255,255,255,0.08);
+  /* Border color for glass cards */
   --glass-border: rgba(0,0,0,0.10);
+
+  /* Default Body Gradient */
   --body-gradient: linear-gradient(135deg, rgb(245 247 250) 0%, rgb(195 207 226) 100%);
+
+  /* Weather-Specific Gradients (Light Mode) */
   --weather-sunny: linear-gradient(135deg, #ffd452 0%, #ff9a56 100%);
   --weather-sunny-dark: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
   --weather-rainy: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
   --weather-rainy-dark: linear-gradient(135deg, #0ea5e9 0%, #1e40af 100%);
   --weather-stormy: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   --weather-stormy-dark: linear-gradient(135deg, #3730a3 0%, #1e293b 100%);
+
+  /* Shadow System */
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
   --ring: rgb(59 130 246 / 0.5);
+  
   /* Foreground used for text inside glass cards (dark on light mode, white on dark mode) */
   --card-foreground: 210 20% 12%;
 }
 
+/* Dark Mode Overrides */
 .dark {
   --foreground: 0 0% 98%;
   --foreground-muted: 217.2 32.6% 76.5%;
   --background: 222.2 84% 4.9%;
+
+  /* Glassmorphism Variables - Dark Mode */
+  /* Adjusted for better contrast against dark backgrounds */
   --glass-primary: linear-gradient(to bottom right, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
   --glass-secondary: linear-gradient(to bottom right, rgba(255,255,255,0.10), rgba(255,255,255,0.05));
   --glass-tertiary: rgba(255,255,255,0.05);
   --glass-border: rgba(255,255,255,0.10);
+
+  /* Default Body Gradient - Dark Mode */
   --body-gradient: linear-gradient(135deg, rgb(15 15 35) 0%, rgb(26 26 46) 100%);
+  
+  /* Text color inside cards */
   --card-foreground: 0 0% 100%;
 }
 
+/* Global Transitions */
 html {
   transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
 }
 
+/* Body Styles */
 body {
   background: var(--body-gradient);
   transition: background 0.3s ease-in-out;
   color: hsl(var(--foreground));
 }
 
+/* Dynamic Weather Background Classes */
+/* These classes are applied by JS based on weather conditions */
 body.weather-sunny { background: var(--weather-sunny); }
 .dark body.weather-sunny { background: var(--weather-sunny-dark); }
+
 body.weather-rainy { background: var(--weather-rainy); }
 .dark body.weather-rainy { background: var(--weather-rainy-dark); }
+
 body.weather-stormy { background: var(--weather-stormy); }
 .dark body.weather-stormy { background: var(--weather-stormy-dark); }
 
-/* Scrollbars */
+/* Custom Scrollbar Styling */
 ::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track { background: hsl(var(--background) / 0.5); }
 ::-webkit-scrollbar-thumb { background: hsl(var(--foreground) / 0.3); border-radius: 4px; }

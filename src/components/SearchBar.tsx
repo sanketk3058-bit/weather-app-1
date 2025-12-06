@@ -4,11 +4,19 @@ import React, { useEffect, useRef, useState } from 'react'
 import { GlassCard } from './GlassCard'
 import { FiSearch, FiX, FiMapPin } from 'react-icons/fi'
 
+/**
+ * Props for the SearchBar component.
+ */
 interface SearchBarProps {
+  /** Callback function triggered when a location is selected */
   onSearch: (lat: number, lon: number, location: string) => void
+  /** Boolean indicating if a search operation is currently in progress */
   isLoading?: boolean
 }
 
+/**
+ * Structure for geolocation data returned by the API.
+ */
 type GeoLocation = {
   name: string
   lat: number
@@ -17,20 +25,38 @@ type GeoLocation = {
   state?: string
 }
 
+// Timeout for fetch requests to prevent hanging
 const FETCH_TIMEOUT = 8000 // ms
 
+/**
+ * SearchBar component providing location search with autocomplete suggestions.
+ * Features:
+ * - Debounced input handling
+ * - Autocomplete suggestions from API
+ * - Search history persistence in localStorage
+ * - Keyboard navigation support
+ * - Click-outside handling to close suggestions
+ */
 export function SearchBar({ onSearch, isLoading = false }: SearchBarProps) {
+  // State for the search input value
   const [query, setQuery] = useState('')
+  // State for the list of suggestions
   const [suggestions, setSuggestions] = useState<GeoLocation[]>([])
+  // State to control visibility of the suggestions dropdown
   const [showSuggestions, setShowSuggestions] = useState(false)
+  // State for recent search history
   const [searchHistory, setSearchHistory] = useState<string[]>([])
+  // State to track internal searching status (fetching suggestions)
   const [searching, setSearching] = useState(false)
+  // State for keyboard navigation index
   const [activeIndex, setActiveIndex] = useState<number | null>(null)
 
+  // Refs for DOM elements and timers
   const rootRef = useRef<HTMLDivElement | null>(null)
   const abortRef = useRef<AbortController | null>(null)
   const debounceRef = useRef<number | null>(null)
 
+  // Effect: Load search history from localStorage on mount
   useEffect(() => {
     const saved = localStorage.getItem('weather-search-history')
     if (saved) {
@@ -42,10 +68,12 @@ export function SearchBar({ onSearch, isLoading = false }: SearchBarProps) {
     }
   }, [])
 
+  // Effect: Save search history to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem('weather-search-history', JSON.stringify(searchHistory.slice(0, 5)))
   }, [searchHistory])
 
+  // Effect: Handle clicks outside the component to close suggestions
   useEffect(() => {
     function onDocClick(e: MouseEvent) {
       if (!rootRef.current) return
@@ -58,20 +86,26 @@ export function SearchBar({ onSearch, isLoading = false }: SearchBarProps) {
     return () => document.removeEventListener('click', onDocClick)
   }, [])
 
-  // Debounced suggestions fetch
+  // Effect: Handle debounced fetching of suggestions when query changes
   useEffect(() => {
+    // Clear suggestions if query is empty
     if (!query.trim()) {
       setSuggestions([])
       setShowSuggestions(false)
       return
     }
 
+    // Clear existing debounce timer
     if (debounceRef.current) window.clearTimeout(debounceRef.current)
+    
+    // Set new debounce timer (300ms)
     debounceRef.current = window.setTimeout(() => {
+      // Abort previous pending request
       abortRef.current?.abort()
       const c = new AbortController()
       abortRef.current = c
 
+      // Fetch new suggestions
       fetchSuggestions(query, c.signal)
         .then((items) => {
           setSuggestions(items)
@@ -91,6 +125,9 @@ export function SearchBar({ onSearch, isLoading = false }: SearchBarProps) {
     }
   }, [query, searchHistory])
 
+  /**
+   * Helper to fetch with a timeout to prevent hanging requests.
+   */
   async function fetchWithTimeout(url: string, options: RequestInit = {}) {
     const controller = new AbortController()
     const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT)

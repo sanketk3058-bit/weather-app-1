@@ -1,0 +1,13 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "phase_5_complete",
+			"type": "shell",
+			"command": "echo \"Phase 5 Complete\"",
+			"args": [],
+			"isBackground": false,
+			"group": "none"
+		}
+	]
+}

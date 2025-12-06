@@ -1,24 +1,20 @@
-import type { Metadata } from 'next'
+import React from 'react'
 import { Inter } from 'next/font/google'
 import '@/app/globals.css'
 
-const inter = Inter({ subsets: ['latin'] })
+// Configure Inter to load only the weights we use and to use font-display: swap
+// Update the `weight` list if you need additional weights (e.g. '500', '600').
+export const inter = Inter({
+  subsets: ['latin'],
+  weight: ['400', '700'],
+  display: 'swap',
+  variable: '--font-inter',
+})
 
-export const metadata: Metadata = {
-  title: 'Weather App - Beautiful Glass Design',
-  description: 'A stunning weather application with Apple glass-like design',
-}
-
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="h-full scroll-smooth">
-      <body className={`${inter.className} min-h-screen antialiased` }>
-        {children}
-      </body>
+    <html lang="en">
+      <body className={`${inter.className} min-h-screen antialiased`}>{children}</body>
     </html>
   )
 }

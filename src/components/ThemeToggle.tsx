@@ -4,8 +4,15 @@ import React from 'react';
 import { useTheme } from '@/hooks/useTheme';
 import { Sun, Moon } from 'lucide-react';
 
+/**
+ * Component for toggling between light and dark themes.
+ * Renders a fixed-position button that switches the application theme.
+ */
 export const ThemeToggle = () => {
+  // Use the custom useTheme hook to access theme state and toggle function
   const { theme, toggleTheme, mounted } = useTheme();
+  
+  // Don't render until mounted to prevent hydration mismatch
   if (!mounted) return null;
 
   // Debug: log mount and theme for visibility checks in DevTools
@@ -23,7 +30,7 @@ export const ThemeToggle = () => {
         top: 16,
         right: 16,
         zIndex: 9999,
-        background: '#ff3366',
+        background: '#ff3366', // Distinctive color for visibility
         color: '#fff',
         width: 72,
         height: 72,
@@ -37,6 +44,7 @@ export const ThemeToggle = () => {
       title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
     >
       <span style={{ fontSize: 12, fontWeight: 700, marginRight: 8 }}>Theme</span>
+      {/* Display appropriate icon based on current theme */}
       <span style={{ fontSize: 20 }}>{theme === 'dark' ? '☀️' : '🌙'}</span>
     </button>
   );

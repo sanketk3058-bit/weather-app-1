@@ -19,15 +19,24 @@ import {
 } from 'react-icons/wi'
 import { IconType } from 'react-icons'
 
+/**
+ * Props for the WeatherIcon component.
+ */
 interface WeatherIconProps {
+  /** Weather condition description (e.g., "light rain") - used for animation logic */
   condition: string
+  /** OpenWeatherMap icon code (e.g., "01d") */
   icon?: string
+  /** Size of the icon in pixels. Defaults to 64. */
   size?: number
+  /** Additional CSS classes */
   className?: string
+  /** Whether to enable hover animations. Defaults to true. */
   enableHoverAnimation?: boolean
 }
 
 // Map OpenWeatherMap icon codes to React Icons and Colors
+// This configuration object maps API icon codes to specific React components and color schemes.
 const iconConfig: Record<string, { component: IconType, color: string, hoverColor: string }> = {
   '01d': { component: WiDaySunny, color: '#F59E0B', hoverColor: '#FBBF24' }, // Clear Day - Amber
   '01n': { component: WiNightClear, color: '#60A5FA', hoverColor: '#93C5FD' }, // Clear Night - Blue
@@ -44,11 +53,17 @@ const iconConfig: Record<string, { component: IconType, color: string, hoverColo
   '11d': { component: WiThunderstorm, color: '#7C3AED', hoverColor: '#8B5CF6' }, // Thunderstorm - Purple
   '11n': { component: WiThunderstorm, color: '#7C3AED', hoverColor: '#8B5CF6' },
   '13d': { component: WiSnow, color: '#E5E7EB', hoverColor: '#F3F4F6' }, // Snow - White/Gray
-  '13n': { component: WiSnow, color: '#E5E7EB', hoverColor: '#F3F4F6' },
+  '13n': { component: WiSnow, color: '#E5E7EB', hoverColor: '#F3F4F6' }, // Snow Night
   '50d': { component: WiFog, color: '#D1D5DB', hoverColor: '#E5E7EB' }, // Mist - Light Gray
-  '50n': { component: WiFog, color: '#D1D5DB', hoverColor: '#E5E7EB' },
+  '50n': { component: WiFog, color: '#D1D5DB', hoverColor: '#E5E7EB' }, // Mist Night
 }
 
+/**
+ * Component to display an animated weather icon based on the weather condition.
+ * Uses Framer Motion for animations and React Icons for the iconography.
+ * 
+ * @param props - Configuration for the icon
+ */
 export function WeatherIcon({
   condition,
   icon,
@@ -58,11 +73,16 @@ export function WeatherIcon({
 }: WeatherIconProps) {
   const [isHovered, setIsHovered] = useState(false)
 
-  // Default to sunny/clear if icon not found
+  // Default to sunny/clear if icon not found in config
   const config = icon && iconConfig[icon] ? iconConfig[icon] : iconConfig['01d']
   const IconComponent = config.component
 
+  /**
+   * Determine animation variants based on the weather condition.
+   * Returns a Framer Motion Variants object.
+   */
   const getAnimationVariants = (): Variants => {
+    // Rain/Shower conditions: Vertical movement (falling rain effect)
     if (condition.toLowerCase().includes('rain') || condition.toLowerCase().includes('shower')) {
       return {
         animate: {
@@ -75,7 +95,9 @@ export function WeatherIcon({
           transition: { duration: 0.3 }
         }
       }
-    } else if (condition.toLowerCase().includes('storm') || condition.toLowerCase().includes('thunder')) {
+    } 
+    // Storm/Thunder conditions: Pulsing and brightness flash
+    else if (condition.toLowerCase().includes('storm') || condition.toLowerCase().includes('thunder')) {
       return {
         animate: {
           scale: [1, 1.05, 1],
@@ -88,7 +110,9 @@ export function WeatherIcon({
           transition: { duration: 0.3 }
         }
       }
-    } else if (condition.toLowerCase().includes('snow')) {
+    } 
+    // Snow conditions: Gentle rocking
+    else if (condition.toLowerCase().includes('snow')) {
       return {
         animate: {
           rotate: [0, 5, -5, 0],

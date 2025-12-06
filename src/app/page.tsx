@@ -13,12 +13,13 @@ import { convertTemperature } from '@/lib/utils'
 import { WeatherIconSkeleton } from '@/components/skeletons/WeatherIconSkeleton'
 import { HourlyForecastSkeleton } from '@/components/skeletons/HourlyForecastSkeleton'
 
-// Dynamic imports for heavy components to reduce initial bundle size
+// Dynamic imports for heavy components to reduce initial bundle size.
+// This improves First Contentful Paint (FCP) by splitting the code.
 const WeatherIcon = dynamic(
   () => import('@/components/WeatherIcon').then(mod => ({ default: mod.WeatherIcon })),
   {
-    ssr: false,
-    loading: () => <WeatherIconSkeleton size={64} />
+    ssr: false, // Disable SSR for icons to avoid hydration mismatches
+    loading: () => <WeatherIconSkeleton size={64} /> // Show skeleton while loading
   }
 )
 
@@ -30,46 +31,67 @@ const HourlyForecast = dynamic(
   }
 )
 
+/**
+ * Main Page Component
+ * 
+ * This is the primary view of the application. It orchestrates:
+ * - State management for location and units
+ * - Data fetching via the useWeather hook
+ * - Layout composition using GlassCard components
+ * - Dynamic background updates based on weather conditions
+ */
 export default function Home() {
+  // State for the currently selected location (lat, lon, name)
   const [currentLocation, setCurrentLocation] = useState<WeatherLocation | null>(null)
+  // State for the temperature unit (metric vs imperial)
   const [unit, setUnit] = useState<'metric' | 'imperial'>('metric')
+  // State to track if the component has mounted (for localStorage access)
   const [isLoaded, setIsLoaded] = useState(false)
 
-  // Use SWR-powered hook for weather data fetching with caching & deduplication
+  // Use SWR-powered hook for weather data fetching with caching & deduplication.
+  // This hook handles the API calls, caching, and error states.
   const { data: weatherData, error: fetchError, isLoading, isValidating } = useWeather(currentLocation)
+  
+  // Combine loading states: initial load (isLoading) or revalidation (isValidating)
   const loading = isLoading || isValidating
+  // Extract error message if present
   const error = fetchError?.message ?? null
 
-  // Load settings from localStorage
+  // Effect: Load saved settings from localStorage on mount
   useEffect(() => {
+    // Restore unit preference
     const savedUnit = localStorage.getItem('weather-app-unit') as 'metric' | 'imperial'
     if (savedUnit) setUnit(savedUnit)
 
+    // Restore last searched location
     const savedLocation = localStorage.getItem('weather-app-last-location')
     if (savedLocation) {
       const { lat, lon, location } = JSON.parse(savedLocation)
       setCurrentLocation({ lat, lon, location })
     }
+    
+    // Mark as loaded to enable subsequent localStorage writes
     setIsLoaded(true)
   }, [])
 
-  // Save unit to localStorage
+  // Effect: Save unit preference to localStorage whenever it changes
   useEffect(() => {
     if (isLoaded) {
       localStorage.setItem('weather-app-unit', unit)
     }
   }, [unit, isLoaded])
 
-  // Handle search by updating location state (triggers SWR refetch automatically)
+  // Callback: Handle search selection
+  // Updates state and persists the new location to localStorage
   const handleSearch = useCallback((lat: number, lon: number, location: string) => {
     setCurrentLocation({ lat, lon, location })
     // Save last location to localStorage
     localStorage.setItem('weather-app-last-location', JSON.stringify({ lat, lon, location }))
   }, [])
 
-  // Effect to update body class based on weather condition
+  // Effect: Update body class based on weather condition for dynamic background gradients
   useEffect(() => {
-    // Reset classes first
+    // Reset all weather-specific classes first
     document.body.classList.remove(
       'weather-sunny',
       'weather-cloudy',
@@ -80,8 +102,9 @@ export default function Home() {
 
     if (weatherData) {
       const condition = weatherData.current.description.toLowerCase();
-      let weatherClass = 'weather-cloudy'; // Default
+      let weatherClass = 'weather-cloudy'; // Default fallback
 
+      // Determine the appropriate class based on keywords in the description
       if (condition.includes('clear') || condition.includes('sun')) {
         weatherClass = 'weather-sunny';
       } else if (condition.includes('rain') || condition.includes('drizzle') || condition.includes('shower')) {
@@ -94,9 +117,10 @@ export default function Home() {
         weatherClass = 'weather-cloudy';
       }
 
+      // Apply the determined class to the body
       document.body.classList.add(weatherClass);
     } else {
-      // Default background if no data
+      // Default background if no data is loaded yet
       document.body.classList.add('weather-cloudy');
     }
 

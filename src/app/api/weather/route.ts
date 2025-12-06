@@ -4,19 +4,48 @@ import { rateLimit, getClientIp } from '@/lib/rate-limit'
 import { sanitizeLocationName, validateCoordinate } from '@/lib/input-sanitizer'
 import type { WeatherData, DailyForecast, AirQualityData, UVIndexData, PollenData } from '../../../lib/types'
 
-// Helper to safely fetch optional data with fallback
+/**
+ * Helper function to safely fetch optional data with a fallback value.
+ * Ensures that a failure in a secondary data source (like Pollen or UV)
+ * does not crash the entire weather request.
+ * 
+ * @param fetchFn - The async function to execute
+ * @param fallback - The default value to return if fetchFn fails
+ * @returns The result of fetchFn or the fallback value
+ */
 async function fetchWithFallback<T>(fetchFn: () => Promise<T>, fallback: T): Promise<T> {
   try {
     return await fetchFn()
   } catch (err) {
+    // Log warning but continue execution
     console.warn('API fallback used:', err)
     return fallback
   }
 }
 
+/**
+ * GET handler for the Weather Aggregation API route.
+ * Fetches and combines data from multiple OpenWeatherMap endpoints:
+ * - Current Weather
+ * - Forecast (Daily/Hourly)
+ * - Air Quality
+ * - UV Index
+ * - Pollen (Simulated/Derived)
+ * 
+ * Features:
+ * - Rate limiting
+ * - Input validation & sanitization
+ * - Reverse geocoding fallback
+ * - Resilience via fallback values for optional data
+ * 
+ * @param request - The incoming HTTP request containing lat/lon parameters
+ * @returns JSON response with aggregated WeatherData
+ */
 export async function GET(request: Request) {
-  // Rate limiting: 30 requests per minute per IP
+  // Identify client IP for rate limiting
   const clientIp = getClientIp(request)
+  
+  // Apply rate limit: 30 requests per minute
   const rateLimitResult = rateLimit(clientIp, 30, 60000)
 
   if (!rateLimitResult.success) {
@@ -41,7 +70,8 @@ export async function GET(request: Request) {
     const latParam = url.searchParams.get('lat')
     const lonParam = url.searchParams.get('lon')
 
-    // Validate coordinates with range checking
+    // Validate coordinates with strict range checking (-90 to 90, -180 to 180)
+    // Throws error if invalid
     const lat = validateCoordinate(latParam, 'lat')
     const lon = validateCoordinate(lonParam, 'lon')
 
@@ -51,7 +81,8 @@ export async function GET(request: Request) {
       ? sanitizeLocationName(locationParam)
       : 'Unknown Location'
 
-    // If location is "Current Location" or missing, try to reverse geocode
+    // If location is generic ("Current Location") or missing, attempt reverse geocoding
+    // to get the actual city/country name from coordinates.
     let locationCountry = ''
     if (locationName === 'Current Location' || !locationParam) {
       const reversed = await weatherAPI.reverseGeocode(lat, lon)
@@ -61,15 +92,16 @@ export async function GET(request: Request) {
       }
     }
 
+    // Fetch current weather (Critical - no fallback)
     const current = await weatherAPI.getCurrentWeather(lat, lon)
 
-    // Fetch forecast (daily and hourly)
+    // Fetch forecast (daily and hourly) with fallback to empty arrays
     const forecastData = await fetchWithFallback(
       () => weatherAPI.getForecast(lat, lon),
       { daily: [], hourly: [] }
     )
 
-    // Fetch optional data with fallbacks
+    // Fetch Air Quality Data with fallback to zero values
     const airQuality = await fetchWithFallback<AirQualityData>(
       () => weatherAPI.getAirQuality(lat, lon),
       {
@@ -86,11 +118,13 @@ export async function GET(request: Request) {
       }
     )
 
+    // Fetch UV Index with fallback
     const uvIndex = await fetchWithFallback<UVIndexData>(
       () => weatherAPI.getUVIndex(lat, lon),
       { uvIndex: 0, uvIndexMax: 0 }
     )
 
+    // Generate Pollen Data (derived from weather conditions) with fallback
     const pollen = await fetchWithFallback<PollenData>(
       async () => weatherAPI.generatePollenData(current, forecastData.daily),
       {
