@@ -11,6 +11,7 @@
     "test": "jest --passWithNoTests",
     "analyze": "cross-env ANALYZE=true next build",
     "optimize:images": "node scripts/optimize-images.js"
+    ,"generate:favicon": "node scripts/generate-favicon.js"
   },
   "dependencies": {
     "axios": "^1.6.2",

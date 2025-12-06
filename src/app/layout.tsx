@@ -14,6 +14,15 @@ export const inter = Inter({
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
+      <head>
+        {/* Primary favicon (SVG) + modern image fallbacks we already have in public/images */}
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        {/* Legacy fallback for older browsers */}
+        <link rel="shortcut icon" href="/favicon.ico" />
+        <link rel="icon" type="image/avif" href="/images/rain.avif" />
+        <link rel="icon" type="image/webp" href="/images/rain.webp" />
+        {/* Note: browsers that expect /favicon.ico will request it automatically if present. */}
+      </head>
       <body className={`${inter.className} min-h-screen antialiased`}>{children}</body>
     </html>
   )
