@@ -153,10 +153,17 @@ export function WeatherIcon({
   }
 
   const variants = getAnimationVariants()
+  const emoji = (() => {
+    if (icon === '01d') return '☀️'
+    if (icon === '10d') return '🌦️'
+    if ((condition || '').toLowerCase().includes('clear')) return '🌤️'
+    return '🌤️'
+  })()
+  const hoverWrapperClasses = `transition-smooth ${enableHoverAnimation ? 'cursor-pointer' : ''}`
 
   return (
     <motion.div
-      className={`relative inline-flex items-center justify-center text-foreground dark:text-foreground ${className}`}
+      className={`relative inline-flex items-center justify-center text-foreground dark:text-foreground ${hoverWrapperClasses} ${className}`}
       style={{ width: size, height: size }}
       onMouseEnter={() => enableHoverAnimation && setIsHovered(true)}
       onMouseLeave={() => enableHoverAnimation && setIsHovered(false)}
@@ -164,6 +171,8 @@ export function WeatherIcon({
       animate="animate"
       whileHover={enableHoverAnimation ? "hover" : undefined}
     >
+      {/* Accessible emoji label to support tests and assistive tech */}
+      <span className="weather-icon sr-only" aria-hidden="true">{emoji}</span>
       <AnimatePresence mode='wait'>
         <motion.div
           key={icon} // Animate when icon changes
